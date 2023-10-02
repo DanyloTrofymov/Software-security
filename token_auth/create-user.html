@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create-user</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <main id="main-holder">
+        <a href="/" id="login">Login</a>
+
+        <h1 id="create-header">Create-user</h1>
+
+        <div id="create-error-msg-holder">
+            <p id="create-error-msg">User already exists</p>
+        </div>
+        <div id="create-error-msg-holder">
+            <p id="create-error-msg-2">Email must be correct and
+                password must contain at least 8 characters including
+                a lower-case letter, an upper-case letter, and a number.
+            </p>
+        </div>
+        <div id="create-successfull-msg-holder">
+            <p id="create-successfull-msg">User created successfully</p>
+        </div>
+
+        <form id="create-form" action="/api/create" method="post">
+            <input type="text" name="email" id="email-field" class="create-form-field" placeholder="Email">
+            <input type="password" name="password" id="password-field" class="create-form-field" placeholder="Password">
+            <input type="submit" value="Create" id="create-form-submit">
+        </form>
+
+    </main>
+</body>
+
+
+<style>
+    html {
+        height: 100%;
+    }
+
+    body {
+        height: 100%;
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        display: grid;
+        justify-items: center;
+        align-items: center;
+        background-color: #3a3a3a;
+    }
+
+    #logout {
+        opacity: 0;
+    }
+
+    #main-holder {
+        width: 50%;
+        height: 70%;
+        display: grid;
+        justify-items: center;
+        align-items: center;
+        background-color: white;
+        border-radius: 7px;
+        box-shadow: 0px 0px 5px 2px black;
+    }
+
+    #create-error-msg-holder {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        justify-items: center;
+        align-items: center;
+    }
+
+    #create-error-msg {
+        width: 23%;
+        text-align: center;
+        margin: 0;
+        padding: 5px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #8a0000;
+        border: 1px solid #8a0000;
+        background-color: #e58f8f;
+        opacity: 0;
+    }
+
+    #create-error-msg-2 {
+        width: 23%;
+        text-align: center;
+        margin: 0;
+        padding: 5px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #8a0000;
+        border: 1px solid #8a0000;
+        background-color: #e58f8f;
+        opacity: 0;
+    }
+
+    #create-successfull-msg-holder {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        justify-items: center;
+        align-items: center;
+    }
+
+    #create-successfull-msg {
+        width: 23%;
+        text-align: center;
+        margin: 0;
+        padding: 5px;
+        font-size: 12px;
+        font-weight: bold;
+        color: rgb(0, 0, 0);
+        box-shadow: 0px 0px 5px 2px black;
+        opacity: 0;
+    }
+
+    #error-msg-second-line {
+        display: block;
+    }
+
+    #create-form {
+        align-self: flex-start;
+        display: grid;
+        justify-items: center;
+        align-items: center;
+    }
+
+    .create-form-field::placeholder {
+        color: #3a3a3a;
+    }
+
+    .create-form-field {
+        border: none;
+        border-bottom: 1px solid #3a3a3a;
+        margin-bottom: 10px;
+        border-radius: 3px;
+        outline: none;
+        padding: 0px 0px 5px 5px;
+    }
+
+    #create-form-submit {
+        width: 100%;
+        padding: 7px;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        background-color: #3a3a3a;
+        cursor: pointer;
+        outline: none;
+    }
+</style>
+
+<script>
+    const access_token = sessionStorage.getItem('access_token');
+    if (access_token) {
+        axios.get('/', {
+            headers: {
+                Authorization: access_token
+            }
+        }).then((response) => {
+            const { username } = response.data;
+
+            if (username) {
+                const mainHolder = document.getElementById("main-holder");
+                const createHeader = document.getElementById("create-header");
+
+                createForm.remove();
+                createErrorMsg.remove();
+                createHeader.remove();
+
+                mainHolder.append(`Hello ${username}`);
+                logoutLink.style.opacity = 1;
+            }
+        });
+    }
+
+
+    const createForm = document.getElementById("create-form");
+    const createButton = document.getElementById("create-form-submit");
+    const createErrorMsg = document.getElementById("create-error-msg");
+    const createErrorMsg2 = document.getElementById("create-error-msg-2");
+    const createSuccessfullMsg = document.getElementById("create-successfull-msg");
+
+    createButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        const email = createForm.email.value;
+        const password = createForm.password.value;
+
+        axios({
+            method: 'post',
+            url: '/api/create',
+            data: {
+                email,
+                password
+            }
+        }).then((response) => {
+            createSuccessfullMsg.style.opacity = 1;
+        }).catch((response) => {
+            createErrorMsg.style.opacity = 0;
+            createErrorMsg2.style.opacity = 0;
+            console.log(response.response);
+            if (response.response.data.error.message == 'The user already exists.')
+                createErrorMsg.style.opacity = 1;
+            else
+                createErrorMsg2.style.opacity = 1;
+        });
+    })
+</script>
+
+</html>
