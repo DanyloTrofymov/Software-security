@@ -1,0 +1,29 @@
+curl --request POST 'https://dev-lhsb-yoq.us.auth0.com/oauth/token' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-d '{"audience": "https://dev-lhsb-yoq.us.auth0.com/api/v2/","grant_type": "client_credentials","client_id": "2l4LcG7PoSsgLjbIpcPbJyHqV3pEyk1L","client_secret": "f4t6-OFqDPJW6reE_tBDR4eYyWmu3v5rgzEkVjwbjr7C6LKlcRvzmGHezQxKo2IO"}'
+
+
+
+
+curl -L 'https://dev-lhsb-yoq.us.auth0.com/api/v2/users' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkgtSGxQNThGTTFEX293aVJraDFWcCJ9.eyJpc3MiOiJodHRwczovL2Rldi1saHNiLXlvcS51cy5hdXRoMC5jb20vIiwic3ViIjoiMmw0TGNHN1BvU3NnTGpiSXBjUGJKeUhxVjNwRXlrMUxAY2xpZW50cyIsImF1ZCI6Imh0dHBzOi8vZGV2LWxoc2IteW9xLnVzLmF1dGgwLmNvbS9hcGkvdjIvIiwiaWF0IjoxNjk1MzAzMDkzLCJleHAiOjE2OTUzODk0OTMsImF6cCI6IjJsNExjRzdQb1NzZ0xqYklwY1BiSnlIcVYzcEV5azFMIiwic2NvcGUiOiJjcmVhdGU6dXNlcnMgcmVhZDpjbGllbnRfY3JlZGVudGlhbHMiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMifQ.sqa-wme2VSOMDvjkZQBqVivxpWb8rHQIGuVVU4W-HYGj1rlEFo04Y5xY4QG07x7pzt8wKh8ZsEvszEoLtFR4-FhYJQ3EUkVXpL4KDI3hES4G4opgqNsStcWRXosU8maL4zqxdsT-fc9AuQulMiKJ8lZBerT9W5S-5GRJSqai-CBB34wwbIz1ZGBeISmdSkaiRA0aKZm9Fe2GsEscR4BfL7bHdDXHWgRYMqZCRL4WGKVILZuvmqlvBa_6qkQN77pNi3PtHvtpA0NWp34FXGMpvDo7aIDf0WQR7vHp06kLDWJVyYjlZbcCj_QpzEVDcgQJWTBLwTkJKZAkLC7xkA2Ykg' \
+-d '{"email":"1danya_trofimov@gmail.com","password":"A$sdfghjklkuytfdcvbnm","connection":"Username-Password-Authentication"}'
+
+
+
+
+curl -X POST 'https://kpi.eu.auth0.com/oauth/token' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-d '{"audience": "https://kpi.eu.auth0.com/api/v2/","grant_type": "client_credentials","client_id": "JIvCO5c2IBHlAe2patn6l6q5H35qxti0","client_secret": "ZRF8Op0tWM36p1_hxXTU-B0K_Gq_-eAVtlrQpY24CasYiDmcXBhNS6IJMNcz1EgB"}'
+
+
+curl -L 'https://kpi.eu.auth0.com/api/v2/users' \
+-H 'Content-Type: application/json' \
+-H 'Accept: application/json' \
+-H 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjVCZTlBZFhrMERaUjhmR1dZYjdkViJ9.eyJpc3MiOiJodHRwczovL2twaS5ldS5hdXRoMC5jb20vIiwic3ViIjoiSkl2Q081YzJJQkhsQWUycGF0bjZsNnE1SDM1cXh0aTBAY2xpZW50cyIsImF1ZCI6Imh0dHBzOi8va3BpLmV1LmF1dGgwLmNvbS9hcGkvdjIvIiwiaWF0IjoxNjk1OTExNzc0LCJleHAiOjE2OTU5OTgxNzQsImF6cCI6IkpJdkNPNWMySUJIbEFlMnBhdG42bDZxNUgzNXF4dGkwIiwic2NvcGUiOiJyZWFkOnVzZXJzIGNyZWF0ZTp1c2VycyIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyJ9.PJ3v6C4spTWd87cpJfPZNl0Lnz2h8BPMiXHwDi0Lr9mkNNe2kXzt2kLDJv2iXuMwjNktPFw35twqzDYcKClaRD8qqX5luCo_H4vcDdvFyRmrk5eBTCAf6RpId0BukTaA22ZZ0GT4QMyXET2fLFeYPeyAKieEo6pDH2l-A35RxzOcO4EZOQMbRHDo3Wl3PtrNO1lG_mBZOIEwipvzk4kMiD21OYeLWlsBO6v-kxz3jG0EcyIlD7Aod9PInbJaEgx-DaH9TA2QRXPrF6IUBeRzTMlq4YrBcRVFnghcR4lTrMmdk6CVUQipd3vlrf9K5_eomXdulqifsSw1Qj7RtOdgpw' \
+-d '{"email":"danya_trofimov@gmail.com","password":"A$sdfghjklkuytfdcvbnm","connection":"Username-Password-Authentication"}'
+
