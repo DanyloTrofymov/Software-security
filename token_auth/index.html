@@ -20,11 +20,8 @@
             <p id="login-error-msg">Invalid username <span id="error-msg-second-line">and/or password</span></p>
         </div>
 
-        <form id="login-form" action="/api/login" method="post">
-            <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
-            <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
-            <input type="submit" value="Login" id="login-form-submit">
-        </form>
+
+        <button id="login-form-submit"> Login </button>
 
     </main>
 </body>
@@ -114,15 +111,15 @@
     }
 
     #login-form-submit {
-        width: 100%;
+        width: 25%;
         padding: 7px;
         border: none;
         border-radius: 5px;
         color: white;
         font-weight: bold;
         background-color: #3a3a3a;
-        cursor: pointer;
         outline: none;
+        text-decoration: none;
     }
 </style>
 
@@ -138,12 +135,12 @@
         }).then((response) => {
             const { username } = response.data;
             exp = response.data.exp;
+            console.log(username);
             if (username) {
                 const mainHolder = document.getElementById("main-holder");
                 const loginHeader = document.getElementById("login-header");
 
-                loginForm.remove();
-                loginErrorMsg.remove();
+                loginButton.remove();
                 loginHeader.remove();
 
                 mainHolder.append(`Hello ${username}`);
@@ -152,10 +149,30 @@
                 createUserLink.style.opacity = 0;
             }
         });
+        console.log(access_token.split('.')[1] == '');
         if (exp < Math.floor(Date.now() / 1000) - 300) {
             refresh();
         }
     }
+    else {
+        const parems = new URLSearchParams(window.location.search);
+        const code = parems.get('code');
+
+        if (code) {
+
+            let url = '/api/login'
+            axios.post(url, { code: code }).then((response) => {
+                sessionStorage.setItem('access_token', response.data.access_token);
+                sessionStorage.setItem('refresh_token', response.data.refresh_token);
+                location.reload();
+            }).catch((response) => {
+                sessionStorage.removeItem('access_token');
+                sessionStorage.removeItem('refresh_token');
+            });
+
+        }
+    }
+
     function refresh() {
         axios({
             method: 'post',
@@ -189,25 +206,7 @@
 
     loginButton.addEventListener("click", (e) => {
         e.preventDefault();
-        const username = loginForm.username.value;
-        const password = loginForm.password.value;
-
-        axios({
-            method: 'post',
-            url: '/api/login',
-            data: {
-                username,
-                password
-            }
-        }).then((response) => {
-            sessionStorage.setItem('access_token', response.data.access_token);
-            sessionStorage.setItem('refresh_token', response.data.refresh_token);
-            location.reload();
-        }).catch((response) => {
-            loginErrorMsg.style.opacity = 1;
-            sessionStorage.removeItem('access_token');
-            sessionStorage.removeItem('refresh_token');
-        });
+        window.location.href = 'https://dev-lhsb-yoq.us.auth0.com/authorize?client_id=2l4LcG7PoSsgLjbIpcPbJyHqV3pEyk1L&redirect_uri=http%3A%2F%2Flocalhost%3A3000&response_type=code&response_mode=query&scope=offline_access%20read:users%20read:current_user%20read:user_idp_tokens&audience=https://dev-lhsb-yoq.us.auth0.com/api/v2/';
     })
 
     refreshButton.addEventListener("click", (e) => {

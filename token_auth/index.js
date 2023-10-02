@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 const port = 3000;
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
-const fs  = require('fs');
+const fs = require('fs');
 
 
 dotenv.config();
@@ -27,12 +27,15 @@ app.get('/create-user', (req, res) => {
     return res.sendFile(path.join(__dirname + '/create-user.html'));
 });
 
-app.get('/', verifyToken, (req, res) => {
-    res.json({
-        username: req.user,
-        exp: req.exp,
-        logout: 'http://localhost:3000/logout'
-    });
+app.get('/', verifyToken, async (req, res) => {
+    console.log(req.user)
+    if (req.user) {
+        res.json({
+            username: req.user,
+            exp: req.exp,
+            logout: 'http://localhost:3000/logout'
+        });
+    }
 })
 
 app.get('/logout', (req, res) => {
@@ -40,28 +43,30 @@ app.get('/logout', (req, res) => {
 });
 
 app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const response = await axios.post(`${process.env.API_URL}oauth/token`, {
-            grant_type: GrantTypes.PASSWORD_REALM,
-            audience: process.env.AUDIENCE_URL,
-            client_id: process.env.CLIENT_ID,
-            client_secret: process.env.CLIENT_SECRET,
-            scope: 'offline_access',
-            realm: 'Username-Password-Authentication',
-            username: username,
-            password: password,
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
-        res.status(201).json({ access_token: response.data.access_token, refresh_token: response.data.refresh_token, username: username });
-    } catch (error) {
-        console.log(error)
-        res.status(401).json({ error: error.response.data });
-
+    const { code } = req.body;
+    console.log(code);
+    if (code) {
+        try {
+            const response = await axios.post(`${process.env.API_URL}oauth/token`, {
+                grant_type: GrantTypes.AUTHORIZATION_CODE,
+                audience: process.env.AUDIENCE_URL,
+                client_id: process.env.CLIENT_ID,
+                client_secret: process.env.CLIENT_SECRET,
+                code: code,
+                redirect_uri: 'http://localhost:3000/'
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            console.log(response.data);
+            res.json({ access_token: response.data.access_token, refresh_token: response.data.refresh_token });
+        }
+        catch (error) {
+            console.log(error.data);
+            res.status(401).json({ error: error.response.data });
+        }
     }
 });
 
@@ -142,13 +147,17 @@ async function verifyToken(req, res, next) {
 
             const currentTimestampInSeconds = Math.floor(Date.now() / 1000);
             if (decoded.exp > currentTimestampInSeconds) {
-                const response = await axios.get(`${process.env.AUDIENCE_URL}users/${decoded.sub}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                req.user = response.data.name;
-                req.exp = decoded.exp;
+                try {
+                    const response = await axios.get(`${process.env.AUDIENCE_URL}users/${decoded.sub}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    req.user = response.data.name;
+                    req.exp = decoded.exp;
+                } catch (error) {
+                    console.log(error);
+                }
             }
             next();
         });
