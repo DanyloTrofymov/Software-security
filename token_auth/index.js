@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 const port = 3000;
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
-const { decode } = require('punycode');
+const fs  = require('fs');
 
 
 dotenv.config();
@@ -128,24 +128,32 @@ app.listen(port, () => {
 
 async function verifyToken(req, res, next) {
     const token = req.header('Authorization');
+
     if (!token) {
         return res.sendFile(path.join(__dirname + '/index.html'));
     }
 
-    decoded = jwt.decode(token);
-
-    if (!decoded) {
-        return res.sendFile(path.join(__dirname + '/index.html'));
-    }
-    const currentTimestampInSeconds = Math.floor(Date.now() / 1000);
-    if (decoded.exp > currentTimestampInSeconds) {
-        const response = await axios.get(`${process.env.AUDIENCE_URL}users/${decoded.sub}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
+    try {
+        const privateKey = fs.readFileSync('private_key.pem', 'utf8');
+        jwt.verify(token, privateKey, { algorithms: ['RS256'] }, async (err, decoded) => {
+            if (err) {
+                return res.sendFile(path.join(__dirname + '/index.html'));
             }
+
+            const currentTimestampInSeconds = Math.floor(Date.now() / 1000);
+            if (decoded.exp > currentTimestampInSeconds) {
+                const response = await axios.get(`${process.env.AUDIENCE_URL}users/${decoded.sub}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                req.user = response.data.name;
+                req.exp = decoded.exp;
+            }
+            next();
         });
-        req.user = response.data.name;
-        req.exp = decoded.exp;
+    } catch (error) {
+        console.error('Error reading private key file:', error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
-    next();
 }
