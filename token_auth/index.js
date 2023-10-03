@@ -60,11 +60,9 @@ app.post('/api/login', async (req, res) => {
                     'Accept': 'application/json'
                 }
             })
-            console.log(response.data);
             res.json({ access_token: response.data.access_token, refresh_token: response.data.refresh_token });
         }
         catch (error) {
-            console.log(error.data);
             res.status(401).json({ error: error.response.data });
         }
     }
